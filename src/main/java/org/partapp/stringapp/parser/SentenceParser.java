@@ -7,6 +7,7 @@ import org.partapp.stringapp.exeption.CustomException;
 import org.partapp.stringapp.type.TextElementType;
 
 public class SentenceParser extends AbstractTextParser {
+  private static final String LEXEME_SPLIT_REGEX = "(?<=\\s)|(?=\\s)";
 
   public SentenceParser() {
     super(TextElementType.SENTENCE);
@@ -16,12 +17,12 @@ public class SentenceParser extends AbstractTextParser {
   public TextComponent parse(String text) throws CustomException {
     TextComponent sentenceComposite = createComposite();
 
-    String[] lexemes = text.split("(?<=\\s)|(?=\\s)");
+    String[] lexemes = text.split(LEXEME_SPLIT_REGEX);
 
     StringBuilder currentLexeme = new StringBuilder();
 
     for (String token : lexemes) {
-      if (token.trim().isEmpty()) {
+      if (token.isBlank()) {
         if (!currentLexeme.isEmpty()) {
           if (nextParser != null) {
             sentenceComposite.add(nextParser.parse(currentLexeme.toString()));

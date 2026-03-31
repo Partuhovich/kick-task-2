@@ -5,6 +5,7 @@ import org.partapp.stringapp.exeption.CustomException;
 import org.partapp.stringapp.type.TextElementType;
 
 public class ParagraphParser extends AbstractTextParser {
+  private static final String SENTENCE_SPLIT_REGEX = "(?<=[.!?])\\s+(?=[A-ZА-Я])";
 
   public ParagraphParser() {
     super(TextElementType.PARAGRAPH);
@@ -13,17 +14,13 @@ public class ParagraphParser extends AbstractTextParser {
   @Override
   public TextComponent parse(String text) throws CustomException {
     TextComponent paragraphComposite = createComposite();
-
-    String[] sentences = text.split("(?<=[.!?])\\s+(?=[A-ZА-Я])");
-
-    if (sentences.length == 0) {
-      sentences = new String[]{text};
-    }
+    String[] sentences = text.split(SENTENCE_SPLIT_REGEX);
 
     for (String sentence : sentences) {
-      if (!sentence.trim().isEmpty()) {
+      String trimmedSentence = sentence.trim();
+      if (!trimmedSentence.isEmpty()) {
         if (nextParser != null) {
-          paragraphComposite.add(nextParser.parse(sentence.trim()));
+          paragraphComposite.add(nextParser.parse(trimmedSentence));
         }
       }
     }

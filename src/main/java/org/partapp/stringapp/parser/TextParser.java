@@ -5,6 +5,7 @@ import org.partapp.stringapp.exeption.CustomException;
 import org.partapp.stringapp.type.TextElementType;
 
 public class TextParser extends AbstractTextParser {
+  private static final String PARAGRAPH_SPLIT_REGEX = "\\n\\s*\\n|\\r\\n\\s*\\r\\n";
 
   public TextParser() {
     super(TextElementType.TEXT);
@@ -17,13 +18,13 @@ public class TextParser extends AbstractTextParser {
     }
 
     TextComponent textComposite = createComposite();
-
-    String[] paragraphs = text.split("\\n\\s*\\n|\\r\\n\\s*\\r\\n");
+    String[] paragraphs = text.split(PARAGRAPH_SPLIT_REGEX);
 
     for (String paragraph : paragraphs) {
-      if (!paragraph.trim().isEmpty()) {
+      String trimmedParagraph = paragraph.trim();
+      if (!trimmedParagraph.isEmpty()) {
         if (nextParser != null) {
-          textComposite.add(nextParser.parse(paragraph.trim()));
+          textComposite.add(nextParser.parse(trimmedParagraph));
         }
       }
     }
