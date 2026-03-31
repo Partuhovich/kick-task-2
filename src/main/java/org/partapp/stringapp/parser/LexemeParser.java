@@ -1,7 +1,6 @@
 package org.partapp.stringapp.parser;
 
 import org.partapp.stringapp.composite.TextComponent;
-import org.partapp.stringapp.composite.impl.TextComposite;
 import org.partapp.stringapp.composite.impl.TextLeaf;
 import org.partapp.stringapp.exeption.CustomException;
 import org.partapp.stringapp.type.TextElementType;

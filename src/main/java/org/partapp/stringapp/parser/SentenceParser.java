@@ -16,7 +16,6 @@ public class SentenceParser extends AbstractTextParser {
   public TextComponent parse(String text) throws CustomException {
     TextComponent sentenceComposite = createComposite();
 
-    // Разбиваем на лексемы по пробелам, сохраняя знаки препинания
     String[] lexemes = text.split("(?<=\\s)|(?=\\s)");
 
     StringBuilder currentLexeme = new StringBuilder();

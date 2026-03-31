@@ -14,14 +14,14 @@ public interface TextComponent {
   String toString();
 
   default void add(TextComponent component) throws CustomException {
-    throw new CustomException("незя");
+    throw new CustomException("Leafs cannot have children");
   }
 
   default List<TextComponent> getChildren() throws CustomException {
-    throw new CustomException("незя");
+    throw new CustomException("Leafs cannot have children");
   }
 
   default void setChildren(List<TextComponent> children) throws CustomException {
-    throw new CustomException("незя");
+    throw new CustomException("Leafs cannot have children");
   }
 }
