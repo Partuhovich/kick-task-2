@@ -57,4 +57,9 @@ public class TextComposite implements TextComponent {
     }
     return result.toString();
   }
+
+  @Override
+  public int size() {
+    return components.size();
+  }
 }

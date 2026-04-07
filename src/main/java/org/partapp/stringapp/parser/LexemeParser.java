@@ -1,35 +1,29 @@
 package org.partapp.stringapp.parser;
 
-import org.partapp.stringapp.composite.TextComponent;
-import org.partapp.stringapp.composite.impl.TextLeaf;
+import org.partapp.stringapp.composite.impl.TextComposite;
 import org.partapp.stringapp.exeption.CustomException;
-import org.partapp.stringapp.type.TextElementType;
 
-import java.util.regex.Pattern;
+import static org.partapp.stringapp.type.TextElementType.LEXEME;
 
 public class LexemeParser extends AbstractTextParser {
-  private static final Pattern WORD_PATTERN = Pattern.compile("^[a-zA-Z]+$");
-  private static final Pattern PUNCTUATION_PATTERN = Pattern.compile("^[.!?;:,\\-'\"()]+$");
+  private final String LEXEMES_DELIMITER = "\\s";
 
   public LexemeParser() {
-    super(TextElementType.LEXEME);
+    super.setNextSuccessor(new WordParser());
   }
 
   @Override
-  public TextComponent parse(String text) throws CustomException {
-    TextComponent lexemeComposite = createComposite();
+  public void parse(String content, TextComposite parent) throws CustomException {
+    String[] lexemes = content.split(LEXEMES_DELIMITER);
 
-    char[] chars = text.toCharArray();
-    for (char c : chars) {
-      if (WORD_PATTERN.matcher(String.valueOf(c)).matches()) {
-        lexemeComposite.add(new TextLeaf(TextElementType.SYMBOL, c));
-      } else if (PUNCTUATION_PATTERN.matcher(String.valueOf(c)).matches()) {
-        lexemeComposite.add(new TextLeaf(TextElementType.PUNCTUATION, c));
-      } else {
-        lexemeComposite.add(new TextLeaf(TextElementType.SYMBOL, c));
-      }
+    for (String lexeme : lexemes) {
+      TextComposite lexemeComposite = new TextComposite(LEXEME);
+
+      parent.add(lexemeComposite);
+
+      AbstractTextParser nextSuccessor = getNextSuccessor();
+
+      nextSuccessor.parse(lexeme, lexemeComposite);
     }
-
-    return lexemeComposite;
   }
 }

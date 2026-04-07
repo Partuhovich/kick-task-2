@@ -1,30 +1,29 @@
 package org.partapp.stringapp.parser;
 
-import org.partapp.stringapp.composite.TextComponent;
+import org.partapp.stringapp.composite.impl.TextComposite;
 import org.partapp.stringapp.exeption.CustomException;
-import org.partapp.stringapp.type.TextElementType;
+
+import static org.partapp.stringapp.type.TextElementType.PARAGRAPH;
 
 public class ParagraphParser extends AbstractTextParser {
-  private static final String SENTENCE_SPLIT_REGEX = "(?<=[.!?])\\s+(?=[A-ZА-Я])";
+  private final String PARAGRAPH_DELIMITER = "\\n\\s+";
 
   public ParagraphParser() {
-    super(TextElementType.PARAGRAPH);
+    super.setNextSuccessor(new SentenceParser());
   }
 
   @Override
-  public TextComponent parse(String text) throws CustomException {
-    TextComponent paragraphComposite = createComposite();
-    String[] sentences = text.split(SENTENCE_SPLIT_REGEX);
+  public void parse(String content, TextComposite parent) throws CustomException {
+    String[] paragraphs = content.split(PARAGRAPH_DELIMITER);
 
-    for (String sentence : sentences) {
-      String trimmedSentence = sentence.trim();
-      if (!trimmedSentence.isEmpty()) {
-        if (nextParser != null) {
-          paragraphComposite.add(nextParser.parse(trimmedSentence));
-        }
-      }
+    for (String paragraph : paragraphs) {
+      TextComposite paragraphComposite = new TextComposite(PARAGRAPH);
+
+      parent.add(paragraphComposite);
+
+      AbstractTextParser nextSuccessor = getNextSuccessor();
+
+      nextSuccessor.parse(paragraph, paragraphComposite);
     }
-
-    return paragraphComposite;
   }
 }

@@ -1,48 +1,30 @@
 package org.partapp.stringapp.parser;
 
-import org.partapp.stringapp.composite.TextComponent;
 import org.partapp.stringapp.composite.impl.TextComposite;
-import org.partapp.stringapp.composite.impl.TextLeaf;
 import org.partapp.stringapp.exeption.CustomException;
-import org.partapp.stringapp.type.TextElementType;
+
+import static org.partapp.stringapp.type.TextElementType.PARAGRAPH;
+import static org.partapp.stringapp.type.TextElementType.SENTENCE;
 
 public class SentenceParser extends AbstractTextParser {
-  private static final String LEXEME_SPLIT_REGEX = "(?<=\\s)|(?=\\s)";
+  private final String SENTENCE_DELIMITER = "(?<=[.!?])\\s+";
 
   public SentenceParser() {
-    super(TextElementType.SENTENCE);
+    super.setNextSuccessor(new LexemeParser());
   }
 
   @Override
-  public TextComponent parse(String text) throws CustomException {
-    TextComponent sentenceComposite = createComposite();
+  public void parse(String content, TextComposite parent) throws CustomException {
+    String[] sentences = content.split(SENTENCE_DELIMITER);
 
-    String[] lexemes = text.split(LEXEME_SPLIT_REGEX);
+    for (String sentence : sentences) {
+      TextComposite sentenceComposite = new TextComposite(SENTENCE);
 
-    StringBuilder currentLexeme = new StringBuilder();
+      parent.add(sentenceComposite);
 
-    for (String token : lexemes) {
-      if (token.isBlank()) {
-        if (!currentLexeme.isEmpty()) {
-          if (nextParser != null) {
-            sentenceComposite.add(nextParser.parse(currentLexeme.toString()));
-          }
-          currentLexeme = new StringBuilder();
-        }
-        TextComposite spaceComposite = new TextComposite(TextElementType.LEXEME);
-        spaceComposite.add(new TextLeaf(TextElementType.SYMBOL, ' '));
-        sentenceComposite.add(spaceComposite);
-      } else {
-        currentLexeme.append(token);
-      }
+      AbstractTextParser nextSuccessor = getNextSuccessor();
+
+      nextSuccessor.parse(sentence, sentenceComposite);
     }
-
-    if (!currentLexeme.isEmpty()) {
-      if (nextParser != null) {
-        sentenceComposite.add(nextParser.parse(currentLexeme.toString()));
-      }
-    }
-
-    return sentenceComposite;
   }
 }

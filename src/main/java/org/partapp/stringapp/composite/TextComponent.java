@@ -13,6 +13,8 @@ public interface TextComponent {
 
   String toString();
 
+  int size();
+
   default void add(TextComponent component) throws CustomException {
     throw new CustomException("Leafs cannot have children");
   }

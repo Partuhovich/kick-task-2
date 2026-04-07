@@ -26,4 +26,9 @@ public class TextLeaf implements TextComponent {
   public String toString() {
     return String.valueOf(content);
   }
+
+  @Override
+  public int size() {
+    return 0;
+  }
 }
